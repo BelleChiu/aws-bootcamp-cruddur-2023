@@ -107,6 +107,13 @@ Get your AWS Account ID
 ```
 aws sts get-caller-identity --query Account --output text
 ```
+
+Set the variable of ACOUNT_ID in env 
+```
+export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+gp env AWS_ACCOUNT_ID=""
+```
+
 - Supply your AWS Account ID
 - Update this json files
 - This is another case with AWS CLI its just much easier to json files due to lots of nested json
