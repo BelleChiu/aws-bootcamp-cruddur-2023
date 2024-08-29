@@ -123,3 +123,19 @@ aws budgets create-budget \
     --budget file://aws/json/budget.json \
     --notifications-with-subscribers file://aws/json/budget-notifications-with-subscribers.json
 ```
+
+## AWS Organization and AWS IAM 
+### AWS IAM User/Group/Role
+- Create AWS IAM User and enable MFA
+- Create AWS IAM Group and add the new IAM User into IAM Group
+- Assign permissions to the IAM User
+
+
+### AWS Organization
+- Create AWS Organization/AWS OU
+- Invitate other aws account to join into AWS Organization 
+- Add the other aws account into AWS OU
+- Create SCP "deny all S3" and attach SCP to the AWS OU
+
+### Create Lucid Charts for the Cruddur Logical Diagraam
+[Curddur Logical Diagram](https://lucid.app/lucidchart/ac6ee166-b10e-44e3-95c2-f693669cb317/edit?invitationId=inv_37bd3262-2c1d-49c5-826d-97d01c94c61a&page=0_0#)
