@@ -159,3 +159,16 @@ volumes:
   db:
     driver: local
 ```
+
+## Top 10 Docker Container Security Best Practices with Tutorial
+- Keep Host and Docker Updated to latest security Patches
+- Docker daemon and containers should run in non-root user mode
+- Image Vulnerability Scanning
+- Trusting a Private vs Public Image Registry
+- No Sensitive Data in Docker files or Images
+- Use Secrect Management Services to Share Secrets
+- Read only File system and Volume Docker
+- Separate database for log term storage
+- Use DevSecOps practice while building application security
+- Ensure all Code is tested for vulnerabilities before production use
+
