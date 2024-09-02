@@ -137,6 +137,17 @@ networks:
     name: cruddur
 ```
 
+To install thethe postgres client into Gitpod, add the following code in gitpod.yml
+
+```
+  - name: postgres
+    init: |
+      curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+      echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+      sudo apt update
+      sudo apt install -y postgresql-client-13 libpq-dev
+```
+
 ### Adding DynamoDB Local and Postgres
 We are going to use Postgres and DynamoDB local in future labs We can bring them in as containers and reference them externally
 
@@ -159,6 +170,57 @@ volumes:
   db:
     driver: local
 ```
+
+#### Challenge Dynamodb Local
+Dynamodb Local emulates a Dynamodb database in your local envirmoment for rapid developement and table design interation
+
+#### Run Docker Local
+```
+docker-compose up
+```
+
+#### Create a table
+```
+aws dynamodb create-table \
+    --endpoint-url http://localhost:8000 \
+    --table-name Music \
+    --attribute-definitions \
+        AttributeName=Artist,AttributeType=S \
+        AttributeName=SongTitle,AttributeType=S \
+    --key-schema AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
+    --table-class STANDARD
+```
+
+#### Create an Item
+```
+aws dynamodb put-item \
+    --endpoint-url http://localhost:8000 \
+    --table-name Music \
+    --item \
+        '{"Artist": {"S": "No One You Know"}, "SongTitle": {"S": "Call Me Today"}, "AlbumTitle": {"S": "Somewhat Famous"}}' \
+    --return-consumed-capacity TOTAL  
+```
+
+#### List Tables
+```
+aws dynamodb list-tables --endpoint-url http://localhost:8000
+```
+
+#### Get Records
+```
+aws dynamodb scan --table-name Music --query "Items" --endpoint-url http://localhost:8000
+```
+
+#### References
+- <https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html>
+- <https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.CLI.html>
+- [Example DynamoDB Local](https://github.com/100DaysOfCloud/challenge-dynamodb-local)
+ 
+### Challenge Postgres 
+
+### 
+
 
 ## Top 10 Docker Container Security Best Practices with Tutorial
 - Keep Host and Docker Updated to latest security Patches
