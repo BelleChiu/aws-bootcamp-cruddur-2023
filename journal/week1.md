@@ -219,7 +219,8 @@ aws dynamodb scan --table-name Music --query "Items" --endpoint-url http://local
  
 ### Challenge Postgres 
 
-### 
+- install postgres extension and add into gitpod.yml
+- after connecting postgres and run `psql -U postgres --host localhost` via command line
 
 
 ## Top 10 Docker Container Security Best Practices with Tutorial
