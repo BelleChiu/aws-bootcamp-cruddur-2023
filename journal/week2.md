@@ -83,3 +83,64 @@ ports:
 
 ## X-Ray
 [What are the best practises for setting up x-ray daemon?](https://stackoverflow.com/questions/54236375/what-are-the-best-practises-for-setting-up-x-ray-daemon)
+
+### Instrument AWS X-Ray for Flask
+
+```
+export AWS_REGION="ca-central-1"
+gp env AWS_REGION="ca-central-1"
+```
+
+Add to the requirements.txt
+```
+aws-xray-sdk
+```
+
+Install pythonpendencies
+```
+pip install -r requirements.txt
+```
+
+Add `app.py`
+```
+
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+
+xray_url = os.getenv("AWS_XRAY_URL")
+xray_recorder.configure(service='Cruddur', dynamic_naming=xray_url)
+XRayMiddleware(app, xray_recorder)
+```
+
+### Setup AWS X-Ray Resources
+add `aws/json/xray.json`
+
+```
+{
+  "SamplingRule": {
+      "RuleName": "Cruddur",
+      "ResourceARN": "*",
+      "Priority": 9000,
+      "FixedRate": 0.1,
+      "ReservoirSize": 5,
+      "ServiceName": "Cruddur",
+      "ServiceType": "*",
+      "Host": "*",
+      "HTTPMethod": "*",
+      "URLPath": "*",
+      "Version": 1
+  }
+}
+```
+```
+FLASK_ADDRESS="https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+aws xray create-group \
+   --group-name "Cruddur" \
+   --filter-expression "service(\"$FLASK_ADDRESS\") {fault OR error}"
+```
+```
+aws xray create-sampling-rule --cli-input-json file://aws/json/xray.json
+```
+
+[Install X-ray Daemon](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html)
+[Github aws-xray-daemon X-Ray Docker Compose example](https://github.com/marjamis/xray/blob/master/docker-compose.yml)
