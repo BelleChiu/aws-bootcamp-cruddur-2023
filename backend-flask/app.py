@@ -53,19 +53,19 @@ provider = TracerProvider()
 processor = BatchSpanProcessor(OTLPSpanExporter())
 provider.add_span_processor(processor)
 
-# rollbar
-## XXX hack to make request data work with pyrollbar <= 0.16.3
-def _get_flask_request():
-    print("Getting flask request")
-    from flask import request
-    print("request:", request)
-    return request
-rollbar._get_flask_request = _get_flask_request
+# # rollbar
+# ## XXX hack to make request data work with pyrollbar <= 0.16.3
+# def _get_flask_request():
+#     print("Getting flask request")
+#     from flask import request
+#     print("request:", request)
+#     return request
+# rollbar._get_flask_request = _get_flask_request
 
-def _build_request_data(request):
-    return rollbar._build_werkzeug_request_data(request)
-rollbar._build_request_data = _build_request_data
-## XXX end hack
+# def _build_request_data(request):
+#     return rollbar._build_werkzeug_request_data(request)
+# rollbar._build_request_data = _build_request_data
+# ## XXX end hack
 
 #### x-ray
 xray_url = os.getenv("AWS_XRAY_URL")
@@ -90,7 +90,36 @@ XRayMiddleware(app, xray_recorder)
 FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
 
-#Rollbar
+
+
+
+frontend = os.getenv('FRONTEND_URL')
+backend = os.getenv('BACKEND_URL')
+origins = [frontend, backend]
+
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  expose_headers="location,link",
+  allow_headers="content-type,if-modified-since",
+  methods="OPTIONS,GET,HEAD,POST"
+)
+
+##Rollbar test
+
+## XXX hack to make request data work with pyrollbar <= 0.16.3
+def _get_flask_request():
+    print("Getting flask request")
+    from flask import request
+    print("request:", request)
+    return request
+rollbar._get_flask_request = _get_flask_request
+
+def _build_request_data(request):
+    return rollbar._build_werkzeug_request_data(request)
+rollbar._build_request_data = _build_request_data
+## XXX end hack
+
 def init_rollbar(app):
   rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
   flask_env = os.getenv('FLASK_ENV')
@@ -107,30 +136,16 @@ def init_rollbar(app):
   got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
   return rollbar
 
-frontend = os.getenv('FRONTEND_URL')
-backend = os.getenv('BACKEND_URL')
-origins = [frontend, backend]
-
-cors = CORS(
-  app, 
-  resources={r"/api/*": {"origins": origins}},
-  expose_headers="location,link",
-  allow_headers="content-type,if-modified-since",
-  methods="OPTIONS,GET,HEAD,POST"
-)
-
-##Rollbar test
-
 @app.route('/rollbar/test')
 def rollbar_test():
     rollbar.report_message('Hello World!', 'warning')
     return "Hello World!"
 
-@app.after_request
-def after_request(response):
-    timestamp = strftime('[%Y-%b-%d %H:%M]')
-    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
-    return response
+# @app.after_request
+# def after_request(response):
+#     timestamp = strftime('[%Y-%b-%d %H:%M]')
+#     LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+#     return response
 
 
 
