@@ -48,10 +48,10 @@ LOGGER.info("some message")
 LOGGER.info("Htestlog")
 
 #HoneyComb .......
-# Initialize tracing and an exporter that can send data to Honeycomb
-provider = TracerProvider()
-processor = BatchSpanProcessor(OTLPSpanExporter())
-provider.add_span_processor(processor)
+# # Initialize tracing and an exporter that can send data to Honeycomb
+# provider = TracerProvider()
+# processor = BatchSpanProcessor(OTLPSpanExporter())
+# provider.add_span_processor(processor)
 
 # # rollbar
 # ## XXX hack to make request data work with pyrollbar <= 0.16.3
@@ -76,8 +76,8 @@ xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
 #simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
 #provider.add_span_processor(simple_processor)
 
-trace.set_tracer_provider(provider)
-tracer = trace.get_tracer(__name__)
+# trace.set_tracer_provider(provider)
+# tracer = trace.get_tracer(__name__)
 
 #HoneyComb ...
 # Initialize automatic instrumentation with Flask
@@ -122,7 +122,7 @@ rollbar._build_request_data = _build_request_data
 
 def init_rollbar(app):
   rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
-  flask_env = os.getenv('FLASK_ENV')
+  flask_env = 'production'
   rollbar.init(
       # access token
       rollbar_access_token,
@@ -135,6 +135,8 @@ def init_rollbar(app):
   # send exceptions from `app` to rollbar, using flask's signal system.
   got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
   return rollbar
+
+rollbar = init_rollbar(app)
 
 @app.route('/rollbar/test')
 def rollbar_test():
