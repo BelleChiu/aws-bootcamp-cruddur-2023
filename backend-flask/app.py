@@ -48,10 +48,10 @@ LOGGER.info("some message")
 LOGGER.info("Htestlog")
 
 #HoneyComb .......
-# # Initialize tracing and an exporter that can send data to Honeycomb
-# provider = TracerProvider()
-# processor = BatchSpanProcessor(OTLPSpanExporter())
-# provider.add_span_processor(processor)
+# Initialize tracing and an exporter that can send data to Honeycomb
+provider = TracerProvider()
+processor = BatchSpanProcessor(OTLPSpanExporter())
+provider.add_span_processor(processor)
 
 # # rollbar
 # ## XXX hack to make request data work with pyrollbar <= 0.16.3
@@ -76,8 +76,8 @@ xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
 #simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
 #provider.add_span_processor(simple_processor)
 
-# trace.set_tracer_provider(provider)
-# tracer = trace.get_tracer(__name__)
+trace.set_tracer_provider(provider)
+tracer = trace.get_tracer(__name__)
 
 #HoneyComb ...
 # Initialize automatic instrumentation with Flask
@@ -197,6 +197,7 @@ def data_notification():
   return data, 200
 
 @app.route("/api/activities/@<string:handle>", methods=['GET'])
+@xray_recorder.capture('user_activities')
 def data_handle(handle):
   model = UserActivities.run(handle)
   if model['errors'] is not None:
