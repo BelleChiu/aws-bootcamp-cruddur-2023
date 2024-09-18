@@ -214,7 +214,7 @@ def data_home():
     # unauthenicated request
     app.logger.debug(e)
     app.logger.debug("unauthenticated")
-    data = HomeActivities.run(logger=LOGGER)
+    data = HomeActivities.run()
   return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
