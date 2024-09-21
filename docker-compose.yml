@@ -53,9 +53,6 @@ services:
       - '5432:5432'
     volumes: 
       - db:/var/lib/postgresql/data
-    command: |
-      export GITPOD_IP=$(curl ifconfig.me)
-      source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds-update-sg-rule"
   # dynamodb-local:
   #   # https://stackoverflow.com/questions/67533058/persist-local-dynamodb-data-in-volumes-lack-permission-unable-to-open-databa
   #   # We needed to add user:root to get this working.
