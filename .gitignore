@@ -2,3 +2,4 @@ alarm_config.json
 budget-notifications-with-subscribers.json
 budget.json
 docker/dynamodb/shared-local-instance.db
+desc.txt
