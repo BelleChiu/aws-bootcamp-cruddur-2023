@@ -16,3 +16,8 @@ blinker
 rollbar
 
 Flask-AWSCognito
+
+#Postgres Client
+
+psycopg[binary]
+psycopg[pool]
